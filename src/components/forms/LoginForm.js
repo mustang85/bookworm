@@ -40,7 +40,7 @@ class LoginForm extends Component {
   }
 
   render() {
-    console.log('LoginForm', this);
+    console.log('LoginForm', this.state);
     const { data, errors } = this.state;
     return (
       <Form onSubmit={this.onSubmit}>
