@@ -10,9 +10,16 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import rootReducer from './rootReducer';
 
+import { userLoggedIn } from './actions/auth';
+
 const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
 
 window.store = store;
+
+if (localStorage.bookwormJWT) {
+  const user = { token: localStorage.bookwormJWT };
+  store.dispatch(userLoggedIn(user));
+}
 
 ReactDOM.render(
   <BrowserRouter>
