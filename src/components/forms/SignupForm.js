@@ -1,27 +1,28 @@
-import React, { Component } from 'react';
-import { Form, Button, Message } from 'semantic-ui-react';
-import Validator from 'validator';
-import InlineError from '../messages/InlineError';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { Form, Button, Message } from 'semantic-ui-react';
+import isEmail from 'validator/lib/isEmail';
+import InlineError from '../messages/InlineError';
 
-class LoginForm extends Component {
+export default class SignupForm extends React.Component {
   static propTypes = {
-    submit: PropTypes.func,
+    submit: PropTypes.func.isRequired
   };
 
   state = {
-    data: {
-      email: '',
-      password: ''
-    },
-    loading: false,
-    errors: {}
-  };
+  	data: {
+  		email: '',
+  		password: ''
+  	},
+  	loading: false,
+  	errors: {}
+  }
 
-  onChange = e =>
-    this.setState({
-      data: { ...this.state.data, [e.target.name]: e.target.value }
-    })
+  onChange = e => 
+  	this.setState({
+  		...this.state,
+  		data: { ...this.state.data, [e.target.name]: e.target.value }
+  	})
 
   onSubmit = () => {
     const errors = this.validate(this.state.data);
@@ -29,34 +30,35 @@ class LoginForm extends Component {
 
     if (Object.keys(errors).length === 0) {
       this.setState({ loading: true });
-      // this.props
-      //   .submit(this.state.data)
-      //   .catch(err =>
-      //     this.setState({ errors: err.response.data.errors, loading: false })
-      //   );
-      this.props.submit(this.state.data);
+      console.log('this.state.data', this.state.data);
+      this.props
+        .submit(this.state.data)
+        .catch(err =>
+          this.setState({ errors: err.response.data.errors, loading: false })
+        );
+      // this.props.submit(this.state.data);
     }
   }
 
   validate = (data) => {
-    const errors = {};
-    if (!Validator.isEmail(data.email)) errors.email = "Invalid email";
-    if (!data.password) errors.password = "Can't be blank";
-    return errors;
+  	const errors = {};
+
+  	if (!isEmail(data.email)) errors.email = 'Invalid email';
+  	if (!data.password) data.password = 'Can\'t be blank';
+
+  	return errors;
   }
 
   render() {
-    console.log('LoginForm', this.state);
-    const { data, errors, loading } = this.state;
+  	const { data, errors, loading } = this.state;
     return (
       <Form onSubmit={this.onSubmit} loading={loading}>
-        { true && (
+      { errors.email && (
           <Message negative>
-            <Message.Header>Something went wrong</Message.Header>
-            <p>{errors.global}</p>
+            <Message.Header>{errors.email}</Message.Header>
           </Message>
         )}
-        <Form.Field error={!!errors.email}>
+      	<Form.Field error={!!errors.email}>
           <label htmlFor="email">Email</label>
           <input
             type="email"
@@ -80,10 +82,8 @@ class LoginForm extends Component {
           />
           {errors.password && <InlineError text={errors.password} />}
         </Form.Field>
-        <Button primary>Login</Button>
+      	<Button primary>Sign up</Button>
       </Form>
     );
   }
 }
-
-export default LoginForm;
